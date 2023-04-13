@@ -54,7 +54,13 @@ def get_song_chords_in_sequence(soup):
     chords_in_sequence.append(x.get_text())
   return chords_in_sequence
 
-webpage = requests.get("https://m.cifraclub.com.br/charlie-brown-jr/musicas.html")
+# salva um arquivo txt onde cada item do array corresponde a uma linha no arquivo. 
+def salva_array_em_txt(path, array):
+  with open(path, "w") as arquivo:
+    for texto in array:
+      arquivo.write(texto + "\n");  
+
+webpage = requests.get("https://m.cifraclub.com.br/djavan/musicas.html")
 soup = BeautifulSoup(webpage.content, "html.parser")
 
 ul = soup.find_all(attrs={"id": "artist-top-musics"})
@@ -63,17 +69,17 @@ for x in ul[0:] :
   for li in lis[1:] :
     url = li.find("a").attrs["href"]
     if (not url.endswith("/letra/")):
-      print(url)
-      soup = get_soup(url)
-      #id = get_song_id(soup)
+      try:
+        print(url)
+        soup = get_soup(url)
+        #id = get_song_id(soup)
 
-      #get_json_content(soup)
-      get_key(soup)
-      #get_chords(soup)
-      print(get_song_chords_in_sequence(soup))
-      
-#      for  step in range(1, 12):
-#        get_transpose(id, step)
-#
-#    break
-#  break
+        #get_json_content(soup)
+        get_key(soup)
+        #get_chords(soup)
+        chords_in_sequence = get_song_chords_in_sequence(soup)
+        salva_array_em_txt("dataset" + url[:-1] + ".txt", chords_in_sequence)
+#        for  step in range(1, 12):
+#          get_transpose(id, step)
+      except:
+        print("########## ERRO PROCESSANDO " + url)
